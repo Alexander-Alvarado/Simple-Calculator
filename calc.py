@@ -1,58 +1,85 @@
 import string
 
-def parser(equ, symbols, numbers):      #function parses numbers and symbols from user input string
-    firstDigit = 0                      #initializes variable to point to the first digit in a number
-
-    for i in range(len(equ)):           #this loop runs through the user input and adds any symbols to the symbols list
-        if(equ[i] not in string.digits and equ[i] not in string.ascii_letters): #condition for non-number non-letter symbols
-            symbols.append(i)           #append symbols to list
-
-    symbols.append(len(equ)+1)          #add a temporary symbol to the end of the user input for use in the next loop
-
-    for i in range(len(symbols)):       #this loop finds numbers in the user input and adds them to the numbers list
-        numbers.append(equ[firstDigit : int(symbols[i])])   #append numbers to list
-        firstDigit = int(symbols[i]) + 1                    #set firstDigit equal to the first character after the current symbol in the user input
+def parser(equ, symbols, numbers, position):    # function parses numbers and symbols from user input string
+    firstDigit = 0                      # initializes variable to point to the first digit in a number          
     
-    symbols.pop()       #pop temporary symbol
+    for i in range(len(equ)):           # this loop runs through the user input and adds any symbols to the symbols list
+        if(equ[i] not in string.digits and equ[i] not in string.ascii_letters):     # condition for non-number non-letter symbols
+            symbols.append(equ[i])      # append symbols to list
+            position.append(i)          #append symbol position to list
 
-def calc(equ, symbols, numbers):    #function does simple calculations using parsed numbers and symbols
-    sum = int(numbers[0])           #initialize sum to the value of the first number in the equation
+    position.append(len(equ)+1)         # adds a symbol to the end of the user input for use in the next loop
+    
+    for i in range(len(position)):      # this loop finds numbers in the user input and adds them to the numbers list
+        numbers.append(equ[firstDigit: int(position[i])])   # append numbers to list
+        firstDigit = int(position[i]) + 1                   # set firstDigit equal to the first character after the current symbol in the user input
 
-    for i in range(len(symbols)):       #this loop calculates each sub equation returns the overall total
-        if(equ[symbols[i]] == "+"):     #addition
-            sum += int(numbers[i+1])
 
-        elif(equ[symbols[i]] == "-"):   #subtraction
-            sum -= int(numbers[i+1])
+def calc(equ, symbols, numbers):    # function does simple calculations using parsed numbers and symbols
+    sum = 0                         # initialize sum to the value of the first number in the equation
+    while('*' in symbols):          # while loop to check if any multiplication is left to be done
+        for i in range(len(symbols)):       
+            if(symbols[i] == "*"):          
+                sum = int(numbers[i]) * int(numbers[i+1])   # preform opperation on numbers before and after the opperator
+                del numbers[i]                              #delete the numbers we opperated on
+                del numbers[i]
+                numbers.insert(0, sum)                      #insert their new value into the numbers list
+                del symbols[i]                              #delete the opperand from the symbols list
+                break                                       #we must break out of the for loop because deleting a symbol has changed the length of our symbols list, this is the reason for the while loop
 
-        elif(equ[symbols[i]] == "*"):   #multiplication
-            sum = sum * int(numbers[i+1])
+    while('/' in symbols):          # while loop to check if any division is left to be done
+        for i in range(len(symbols)):
+            if(symbols[i] == "/"):  
+                sum = int(numbers[i]) / int(numbers[i+1])
+                del numbers[i]
+                del numbers[i]
+                numbers.insert(0, sum)
+                del symbols[i]
+                break
 
-        elif(equ[symbols[i]] == "/"):   #division
-            sum = sum / int(numbers[i+1])
+    while('+' in symbols):          # while loop to check if any addition is left to be done
+        for i in range(len(symbols)):
+            if(symbols[i] == "+"):  
+                sum = int(numbers[i]) + int(numbers[i+1])
+                del numbers[i]
+                del numbers[i]
+                numbers.insert(0, sum)
+                del symbols[i]
+                break
 
-        else:
-            print("--This mathematical operator is not supported--")
-            exit(1)
-    return sum  #return total
+    while('-' in symbols):          # while loop to check if any subtraction is left to be done
+        for i in range(len(symbols)):
+            if(symbols[i] == "-"):  
+                sum = int(numbers[i]) - int(numbers[i+1])
+                del numbers[i]
+                del numbers[i]
+                numbers.insert(0, sum)
+                del symbols[i]
+                break
+
+    return sum
+
 
 def main():
-    symbols = list()    #initialize list for mathematical symbols
-    numbers = list()    #initialize list for numbers
-    equ = ""            #initialize user input equation
+    symbols = list()  # initialize list for mathematical symbols
+    position = list()
+    numbers = list()  # initialize list for numbers
+    equ = ""  # initialize user input equation
 
     while True:
         print("Enter simple equation to calculate:")
 
-        equ = input()       #user input
-        if(equ == "exit"):  #keyword 'exit' to end program
+        equ = input()  # user input
+        if(equ == "exit"):  # keyword 'exit' to end program
             break
 
-        parser(equ, symbols, numbers)  #call to parser function
-        print("%s = %d \n" % (equ, calc(equ,symbols,numbers))) #call to calc function and print result
+        parser(equ, symbols, numbers, position)  # call to parser function
+        # call to calc function and print result
+        print("%s = %d \n" % (equ, calc(equ, symbols, numbers)))
 
-        symbols.clear()    #reset symbol list
-        numbers.clear()    #reset number list
+        symbols.clear()  # reset symbol list
+        numbers.clear()  # reset number list
+
 
 if __name__ == "__main__":
     main()
