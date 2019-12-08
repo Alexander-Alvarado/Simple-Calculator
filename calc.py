@@ -4,7 +4,7 @@ def parser(equ, symbols, numbers, position):    # function parses numbers and sy
     firstDigit = 0                      # initializes variable to point to the first digit in a number          
     
     for i in range(len(equ)):           # this loop runs through the user input and adds any symbols to the symbols list
-        if(equ[i] not in string.digits and equ[i] not in string.ascii_letters):     # condition for non-number non-letter symbols
+        if(equ[i] not in string.digits and equ[i] not in string.ascii_letters and equ[i] not in string.whitespace):     # condition for non-number non-letter symbols
             symbols.append(equ[i])      # append symbols to list
             position.append(i)          #append symbol position to list
 
@@ -62,7 +62,7 @@ def calc(equ, symbols, numbers):    # function does simple calculations using pa
 
 def main():
     symbols = list()  # initialize list for mathematical symbols
-    position = list()
+    position = list() # initialize list for the position of symbols in the user input
     numbers = list()  # initialize list for numbers
     equ = ""  # initialize user input equation
 
@@ -75,10 +75,11 @@ def main():
 
         parser(equ, symbols, numbers, position)  # call to parser function
         # call to calc function and print result
-        print("%s = %d \n" % (equ, calc(equ, symbols, numbers)))
+        print("= %d \n" % calc(equ, symbols, numbers))
 
         symbols.clear()  # reset symbol list
         numbers.clear()  # reset number list
+        print("Enter 'exit' to end the program\n")
 
 
 if __name__ == "__main__":
