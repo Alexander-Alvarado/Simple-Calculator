@@ -70,7 +70,7 @@ def main():
         print("Enter simple equation to calculate:")
 
         equ = input()  # user input
-        if(equ == "exit"):  # keyword 'exit' to end program
+        if(equ == "exit") or if (equ == "quit"):  # keyword 'exit' to end program
             break
 
         parser(equ, symbols, numbers, position)  # call to parser function
